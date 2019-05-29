@@ -141,7 +141,7 @@ class CChessPlayer:
                 self.buffer_planes = self.buffer_planes[k:]
                 self.buffer_history = self.buffer_history[k:]
             self.run_lock.release()
-
+    #这里是AI的计算部分
     def action(self, state, turns, no_act=None, depth=None, infinite=False, hist=None, increase_temp=False) -> str:
         self.all_done.acquire(True)
         self.root_state = state
