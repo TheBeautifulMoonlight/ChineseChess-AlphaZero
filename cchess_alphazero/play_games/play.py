@@ -158,6 +158,8 @@ class PlayWithHuman:
                                             current_chessman.is_selected = False
                                             current_chessman = None
                                             self.history.append(self.env.get_state())
+                                            #有效移动将棋子吃掉对方棋子
+                                            
                                 elif current_chessman != None and chessman_sprite is None:
                                     move = str(current_chessman.chessman.col_num) + str(current_chessman.chessman.row_num) +\
                                            str(col_num) + str(row_num)
@@ -167,9 +169,13 @@ class PlayWithHuman:
                                         current_chessman.is_selected = False
                                         current_chessman = None
                                         self.history.append(self.env.get_state())
-
+                                        #有效移动将一个棋子移动到空位置
+        
+                            
+            #这里实时在GUI更新棋局信息
             self.draw_widget(screen, widget_background)
             framerate.tick(20)
+            #print('Here')
             # clear/erase the last drawn sprites
             self.chessmans.clear(screen, board_background)
 
@@ -177,7 +183,7 @@ class PlayWithHuman:
             self.chessmans.update()
             self.chessmans.draw(screen)
             pygame.display.update()
-
+        
         self.ai.close(wait=False)
         logger.info(f"Winner is {self.env.board.winner} !!!")
         self.env.board.print_record()
@@ -191,12 +197,16 @@ class PlayWithHuman:
         self.history = [self.env.get_state()]
         no_act = None
         while not self.env.done:
+            #这里是一直在循环之内（多线程）
             if ai_move_first == self.env.red_to_move:
+                #检测到应该机器落子了
                 labels = ActionLabelsRed
                 labels_n = len(ActionLabelsRed)
                 self.ai.search_results = {}
                 state = self.env.get_state()
+                print('Here')
                 logger.info(f"state = {state}")
+                #这里才将人走的棋局信息输入
                 _, _, _, check = senv.done(state, need_check=True)
                 if not check and state in self.history[:-1]:
                     no_act = []
@@ -216,6 +226,7 @@ class PlayWithHuman:
                                     break
                     if no_act:
                         logger.debug(f"no_act = {no_act}")
+                #AI在这里做出了决策      
                 action, policy = self.ai.action(state, self.env.num_halfmoves, no_act)
                 if action is None:
                     logger.info("AI has resigned!")
