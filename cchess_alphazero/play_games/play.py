@@ -228,6 +228,7 @@ class PlayWithHuman:
                         logger.debug(f"no_act = {no_act}")
                 #AI在这里做出了决策      
                 action, policy = self.ai.action(state, self.env.num_halfmoves, no_act)
+                #action是AI的决策是一个四位数x0y0x1y1分别代表移动的棋子的原位置与现在的位置，左上角为坐标原点
                 if action is None:
                     logger.info("AI has resigned!")
                     return
